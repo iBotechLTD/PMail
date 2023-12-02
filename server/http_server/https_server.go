@@ -1,6 +1,7 @@
 package http_server
 
 import (
+	"database/sql"
 	"embed"
 	"encoding/json"
 	"fmt"
@@ -13,6 +14,7 @@ import (
 	"pmail/config"
 	"pmail/controllers"
 	"pmail/controllers/email"
+	"pmail/db"
 	"pmail/dto/response"
 	"pmail/i18n"
 	"pmail/models"
@@ -117,6 +119,18 @@ func contextIterceptor(h controllers.HandlerFunc) http.HandlerFunc {
 			if user != "" {
 				_ = json.Unmarshal([]byte(user), &userInfo)
 			}
+			if userInfo == nil && r.Header.Get("account") != "" && r.Header.Get("password") != "" {
+				var user models.User
+				err := db.Instance.Get(&user, db.WithContext(ctx, "select * from user where account =? and password =?"),
+					r.Header.Get("account"), r.Header.Get("password"))
+				if err != nil && err != sql.ErrNoRows {
+					log.Errorf("%+v", err)
+				}
+				if user.ID != 0 {
+					userInfo = &user
+				}
+			}
+
 			if userInfo != nil && userInfo.ID > 0 {
 				ctx.UserID = userInfo.ID
 				ctx.UserName = userInfo.Name
