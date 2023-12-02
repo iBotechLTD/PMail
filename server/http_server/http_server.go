@@ -2,6 +2,7 @@ package http_server
 
 import (
 	"fmt"
+	"github.com/rs/cors"
 	log "github.com/sirupsen/logrus"
 	"io/fs"
 	"net/http"
@@ -33,7 +34,7 @@ func HttpStart() {
 		mux.HandleFunc("/", controllers.Interceptor)
 		httpServer = &http.Server{
 			Addr:         fmt.Sprintf(":%d", HttpPort),
-			Handler:      mux,
+			Handler:      cors.Default().Handler(mux),
 			ReadTimeout:  time.Second * 90,
 			WriteTimeout: time.Second * 90,
 		}
@@ -67,7 +68,7 @@ func HttpStart() {
 		log.Infof("HttpServer Start On Port :%d", HttpPort)
 		httpServer = &http.Server{
 			Addr:         fmt.Sprintf(":%d", HttpPort),
-			Handler:      session.Instance.LoadAndSave(mux),
+			Handler:      session.Instance.LoadAndSave(cors.Default().Handler(mux)),
 			ReadTimeout:  time.Second * 90,
 			WriteTimeout: time.Second * 90,
 		}
