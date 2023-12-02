@@ -34,7 +34,7 @@ func HttpStart() {
 		mux.HandleFunc("/", controllers.Interceptor)
 		httpServer = &http.Server{
 			Addr:         fmt.Sprintf(":%d", HttpPort),
-			Handler:      cors.Default().Handler(mux),
+			Handler:      mux,
 			ReadTimeout:  time.Second * 90,
 			WriteTimeout: time.Second * 90,
 		}
@@ -68,7 +68,7 @@ func HttpStart() {
 		log.Infof("HttpServer Start On Port :%d", HttpPort)
 		httpServer = &http.Server{
 			Addr:         fmt.Sprintf(":%d", HttpPort),
-			Handler:      session.Instance.LoadAndSave(cors.Default().Handler(mux)),
+			Handler:      session.Instance.LoadAndSave(cors.AllowAll().Handler(mux)),
 			ReadTimeout:  time.Second * 90,
 			WriteTimeout: time.Second * 90,
 		}

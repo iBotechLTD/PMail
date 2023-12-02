@@ -79,7 +79,7 @@ func HttpsStart() {
 		log.Infof("Https Server Start On Port :%d", HttpsPort)
 		httpsServer = &http.Server{
 			Addr:         fmt.Sprintf(":%d", HttpsPort),
-			Handler:      session.Instance.LoadAndSave(cors.Default().Handler(mux)),
+			Handler:      session.Instance.LoadAndSave(cors.AllowAll().Handler(mux)),
 			ReadTimeout:  time.Second * 90,
 			WriteTimeout: time.Second * 90,
 			ErrorLog:     nullLog,
