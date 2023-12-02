@@ -62,7 +62,7 @@ func genSQL(ctx *context.Context, counter bool, tag, keyword, to string, offset,
 	}
 
 	if to != "" {
-		sql += " and to like ?"
+		sql += " and `to` like ?"
 		sqlParams = append(sqlParams, "%"+to+"%")
 	}
 
